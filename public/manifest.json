@@ -1,0 +1,17 @@
+{
+  "version": "1",
+  "name": "My Mini App",
+  "homeUrl": "https://your-app.vercel.app",
+  "imageUrl": "https://your-app.vercel.app/og-image.png",
+  "iconUrl": "https://your-app.vercel.app/icon.png",
+  "button": {
+    "title": "Launch App",
+    "action": {
+      "type": "launch_frame",
+      "name": "My Mini App",
+      "url": "https://your-app.vercel.app",
+      "splashImageUrl": "https://your-app.vercel.app/splash.png",
+      "splashBackgroundColor": "#0a0a0a"
+    }
+  }
+}
