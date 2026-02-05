@@ -28,7 +28,7 @@ import {
 import { createConfig, http, WagmiProvider, useAccount, useConnect, useDisconnect } from 'wagmi';
 import { base, mainnet } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { farcasterFrame } from 'miniapp-wagmi-connector';
+import { farcasterFrame } from '@farcaster/miniapp-wagmi-connector';
 
 // ============================================
 // CONFIGURATION - SAFE TO MODIFY

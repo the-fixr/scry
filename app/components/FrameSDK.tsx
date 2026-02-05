@@ -21,32 +21,14 @@ import {
   useCallback,
   type ReactNode,
 } from 'react';
-import sdk from '@farcaster/miniapp-sdk';
+import sdk, { Context } from '@farcaster/miniapp-sdk';
 
 // ============================================
 // TYPE DEFINITIONS
 // ============================================
 
-interface FarcasterUser {
-  fid: number;
-  username?: string;
-  displayName?: string;
-  pfpUrl?: string;
-}
-
-interface MiniappContext {
-  user?: FarcasterUser;
-  location?: {
-    type: string;
-    cast?: {
-      fid: number;
-      hash: string;
-    };
-  };
-}
-
 interface FrameSDKContextType {
-  context: MiniappContext | null;
+  context: Context.MiniAppContext | null;
   isLoaded: boolean;
   isInMiniApp: boolean;
   error: string | null;
@@ -104,7 +86,7 @@ function isValidUrl(urlString: string): boolean {
 const FrameSDKContext = createContext<FrameSDKContextType | null>(null);
 
 export function FrameSDKProvider({ children }: { children: ReactNode }) {
-  const [context, setContext] = useState<MiniappContext | null>(null);
+  const [context, setContext] = useState<Context.MiniAppContext | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInMiniApp, setIsInMiniApp] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -114,28 +96,13 @@ export function FrameSDKProvider({ children }: { children: ReactNode }) {
     const initSDK = async () => {
       try {
         // Check if we're in a Farcaster mini app
-        const inMiniApp = sdk.isInMiniApp();
+        const inMiniApp = await sdk.isInMiniApp();
         setIsInMiniApp(inMiniApp);
 
         if (inMiniApp) {
-          // Get context from SDK
+          // Get context from SDK - use directly, SDK handles validation
           const ctx = await sdk.context;
-
-          if (ctx) {
-            // Sanitize and set context
-            const sanitizedContext: MiniappContext = {
-              user: ctx.user ? {
-                fid: ctx.user.fid,
-                username: sanitizeString(ctx.user.username),
-                displayName: sanitizeString(ctx.user.displayName),
-                pfpUrl: ctx.user.pfpUrl && isValidUrl(ctx.user.pfpUrl)
-                  ? ctx.user.pfpUrl
-                  : undefined,
-              } : undefined,
-              location: ctx.location,
-            };
-            setContext(sanitizedContext);
-          }
+          setContext(ctx);
 
           // Signal ready to Farcaster client
           sdk.actions.ready();
@@ -209,7 +176,8 @@ export function FrameSDKProvider({ children }: { children: ReactNode }) {
     try {
       sdk.actions.setPrimaryButton({
         text,
-        enabled: true,
+        disabled: false,
+        hidden: false,
       });
 
       // Listen for button click
@@ -233,7 +201,7 @@ export function FrameSDKProvider({ children }: { children: ReactNode }) {
     try {
       sdk.actions.setPrimaryButton({
         text: '',
-        enabled: false,
+        hidden: true,
       });
     } catch (err) {
       console.error('[MiniappSDK] clearPrimaryButton error:', err);
@@ -292,18 +260,6 @@ export function useFrameSDK(): FrameSDKContextType {
   }
 
   return context;
-}
-
-// ============================================
-// SECURITY UTILITIES
-// ============================================
-
-function sanitizeString(value: unknown): string | undefined {
-  if (typeof value !== 'string') return undefined;
-  // Remove potential XSS vectors
-  return value
-    .replace(/[<>]/g, '')
-    .slice(0, 256); // Limit length
 }
 
 export default FrameSDKProvider;
