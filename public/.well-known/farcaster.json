@@ -1,0 +1,19 @@
+{
+  "frame": {
+    "version": "1",
+    "name": "Scry",
+    "homeUrl": "https://scry.fixr.nexus",
+    "iconUrl": "https://scry.fixr.nexus/icon.png",
+    "imageUrl": "https://scry.fixr.nexus/og-image.png",
+    "splashImageUrl": "https://scry.fixr.nexus/icon.png",
+    "splashBackgroundColor": "#0a0b14",
+    "button": {
+      "title": "Scry the Curves",
+      "action": {
+        "type": "launch_frame",
+        "name": "Scry",
+        "url": "https://scry.fixr.nexus"
+      }
+    }
+  }
+}

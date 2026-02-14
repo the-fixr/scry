@@ -33,14 +33,6 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
     images: [`${APP_URL}/og-image.png`],
   },
-  // Farcaster Frame metadata
-  other: {
-    'fc:frame': 'vNext',
-    'fc:frame:image': `${APP_URL}/og-image.png`,
-    'fc:frame:button:1': `Launch ${APP_NAME}`,
-    'fc:frame:button:1:action': 'launch_frame',
-    'fc:frame:button:1:target': APP_URL,
-  },
 };
 
 export default function RootLayout({
@@ -60,7 +52,7 @@ export default function RootLayout({
 /**
  * NOTES:
  * - Uses @farcaster/miniapp-sdk for native mini app features
+ * - Mini app manifest at public/.well-known/farcaster.json
  * - SDK is imported in app/components/FrameSDK.tsx
  * - When running outside Farcaster, the app works in standalone mode
- * - See README.md for full documentation
  */
