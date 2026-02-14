@@ -109,6 +109,13 @@ export function FrameSDKProvider({ children }: { children: ReactNode }) {
 
           // Signal ready to Farcaster client
           sdk.actions.ready();
+
+          // Prompt user to add mini app (captures notification token via Neynar webhook)
+          try {
+            await sdk.actions.addMiniApp();
+          } catch {
+            // User dismissed or already added — not an error
+          }
         } else {
           // Not in a mini app - running standalone
           console.log('[MiniappSDK] Running outside Farcaster mini app');
