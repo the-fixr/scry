@@ -1,4 +1,9 @@
 {
+  "accountAssociation": {
+    "header": "eyJmaWQiOjI1NzQzOTMsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhGREFmNzE5OTRiM0ZmQTZGQzVCQ2FmQjY1RjhiNzA5MkNFYjAxOTJBIn0",
+    "payload": "eyJkb21haW4iOiJzY3J5LmZpeHIubmV4dXMifQ",
+    "signature": "HYhC+tYvlCr8hAZjuhUFEfrCNZvAo6VJElBWqzhYpHZjDFDD8rj6qTny8s1zrIHyWFlQ5BQe3cHbV1kzK7DMVRs="
+  },
   "frame": {
     "version": "1",
     "name": "Scry",
