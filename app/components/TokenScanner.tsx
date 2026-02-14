@@ -734,6 +734,9 @@ export function TokenScanner({ tier, scryBalance }: TokenScannerProps) {
             {/* Trade panel */}
             <TradePanel
               tokenSymbol={selectedToken.detail.symbol}
+              tokenAddress={selectedToken.detail.address}
+              reserveToken={selectedToken.detail.bond.reserveToken}
+              reserveSymbol={selectedToken.detail.reserveSymbol}
               currentPrice={formatPrice(selectedToken.detail.currentPrice)}
               onTradeComplete={handleTradeComplete}
             />

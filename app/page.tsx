@@ -7,7 +7,8 @@ import { TokenScanner } from './components/TokenScanner';
 import { PortfolioBar } from './components/PortfolioBar';
 import { Modal } from './components/Modal';
 import { getTier, type TierInfo } from './lib/tiers';
-import { TIERS } from './lib/constants';
+import { TIERS, HUNT_ADDRESS, SCRY_TOKEN } from './lib/constants';
+import { getTokenBalance } from './lib/mintclub';
 
 function AppContent() {
   const { context, isLoaded, actions } = useFrameSDK();
@@ -21,6 +22,28 @@ function AppContent() {
   useEffect(() => {
     setTier(getTier(scryBalance));
   }, [scryBalance]);
+
+  // Fetch token balances when wallet connects
+  useEffect(() => {
+    if (!isConnected || !address) return;
+    const wallet = address as `0x${string}`;
+
+    const fetchBalances = async () => {
+      const [huntRaw, scryRaw] = await Promise.all([
+        getTokenBalance(HUNT_ADDRESS as `0x${string}`, wallet),
+        SCRY_TOKEN !== '0x0000000000000000000000000000000000000000'
+          ? getTokenBalance(SCRY_TOKEN as `0x${string}`, wallet)
+          : Promise.resolve(0n),
+      ]);
+      const huntVal = Number(huntRaw) / 1e18;
+      setHuntBalance(huntVal < 0.01 && huntVal > 0 ? huntVal.toFixed(6) : huntVal.toFixed(2));
+      setScryBalance(Number(scryRaw) / 1e18);
+    };
+
+    fetchBalances();
+    const interval = setInterval(fetchBalances, 30_000);
+    return () => clearInterval(interval);
+  }, [isConnected, address]);
 
   // Show welcome modal for new users
   useEffect(() => {

@@ -1,7 +1,9 @@
 'use client';
 
+import sdk from '@farcaster/miniapp-sdk';
 import { useFrameSDK } from './FrameSDK';
 import { type TierInfo } from '../lib/tiers';
+import { HUNT_ADDRESS } from '../lib/constants';
 
 interface PortfolioBarProps {
   huntBalance: string; // formatted
@@ -10,8 +12,28 @@ interface PortfolioBarProps {
   totalUsd: string | null; // formatted USD value
 }
 
+// CAIP-19 asset IDs for Base
+const ETH_BASE = 'eip155:8453/native';
+const HUNT_BASE = `eip155:8453/erc20:${HUNT_ADDRESS}`;
+
 export function PortfolioBar({ huntBalance, scryBalance, tier, totalUsd }: PortfolioBarProps) {
-  const { actions } = useFrameSDK();
+  const { actions, isInMiniApp } = useFrameSDK();
+
+  const handleGetHunt = async () => {
+    if (isInMiniApp) {
+      try {
+        await sdk.actions.swapToken({
+          sellToken: ETH_BASE,
+          buyToken: HUNT_BASE,
+        });
+      } catch {
+        // User cancelled or swap unavailable — fall back
+        actions.openUrl('https://hunt.town');
+      }
+    } else {
+      actions.openUrl('https://hunt.town');
+    }
+  };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-sm border-t border-border px-4 py-2.5 z-50">
@@ -47,7 +69,7 @@ export function PortfolioBar({ huntBalance, scryBalance, tier, totalUsd }: Portf
             {tier.label}
           </span>
           <button
-            onClick={() => actions.openUrl('https://hunt.town')}
+            onClick={handleGetHunt}
             className="text-[10px] text-gray-500 hover:text-primary transition-colors"
           >
             Get HUNT

@@ -91,6 +91,14 @@ const tokenCountAbi = [{
   outputs: [{ name: '', type: 'uint256' }],
 }] as const;
 
+const erc20BalanceAbi = [{
+  name: 'balanceOf',
+  type: 'function',
+  stateMutability: 'view',
+  inputs: [{ name: 'account', type: 'address' }],
+  outputs: [{ name: '', type: 'uint256' }],
+}] as const;
+
 // ============================================
 // Token List (newest first)
 // ============================================
@@ -107,6 +115,22 @@ export async function getTokenCount(): Promise<number> {
   } catch (err) {
     console.error('[mintclub] getTokenCount error:', err);
     return 0;
+  }
+}
+
+/** Read ERC20 balance for a wallet */
+export async function getTokenBalance(tokenAddress: `0x${string}`, wallet: `0x${string}`): Promise<bigint> {
+  try {
+    const balance = await publicClient.readContract({
+      address: tokenAddress,
+      abi: erc20BalanceAbi,
+      functionName: 'balanceOf',
+      args: [wallet],
+    });
+    return balance;
+  } catch (err) {
+    console.error('[mintclub] getTokenBalance error:', err);
+    return 0n;
   }
 }
 
