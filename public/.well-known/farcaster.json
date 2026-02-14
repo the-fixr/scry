@@ -4,22 +4,22 @@
     "payload": "eyJkb21haW4iOiJzY3J5LmZpeHIubmV4dXMifQ",
     "signature": "HYhC+tYvlCr8hAZjuhUFEfrCNZvAo6VJElBWqzhYpHZjDFDD8rj6qTny8s1zrIHyWFlQ5BQe3cHbV1kzK7DMVRs="
   },
-  "frame": {
+  "miniapp": {
     "version": "1",
     "name": "Scry",
+    "subtitle": "Bonding curve scanner for Base",
+    "description": "Find early tokens, track momentum, spot breakouts — trade in one tap. Powered by Mint Club bonding curves on Base.",
     "homeUrl": "https://scry.fixr.nexus",
-    "webhookUrl": "https://api.neynar.com/f/app/e08f92b7-4107-42a3-b00b-129ddf67b1cd/event",
     "iconUrl": "https://scry.fixr.nexus/icon.png",
-    "imageUrl": "https://scry.fixr.nexus/og-image.png",
     "splashImageUrl": "https://scry.fixr.nexus/icon.png",
     "splashBackgroundColor": "#0a0b14",
-    "button": {
-      "title": "Scry the Curves",
-      "action": {
-        "type": "launch_frame",
-        "name": "Scry",
-        "url": "https://scry.fixr.nexus"
-      }
-    }
+    "heroImageUrl": "https://scry.fixr.nexus/og-image.png",
+    "ogTitle": "Scry",
+    "ogDescription": "Bonding curve scanner for Base. Find early tokens, track momentum, spot breakouts — trade in one tap.",
+    "ogImageUrl": "https://scry.fixr.nexus/og-image.png",
+    "primaryCategory": "developer-tools",
+    "tags": ["defi", "trading", "bonding-curve", "base", "scanner"],
+    "requiredChains": ["eip155:8453"],
+    "webhookUrl": "https://api.neynar.com/f/app/e08f92b7-4107-42a3-b00b-129ddf67b1cd/event"
   }
 }
