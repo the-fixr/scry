@@ -1,280 +1,103 @@
-# Farcaster Mini App Template
+# Scry
 
-A secure, production-ready template for building Farcaster mini apps.
+**Bonding curve opportunity scanner for Base.** A Farcaster mini app that surfaces early, breakout, and high-momentum tokens from the Mint Club ecosystem — then lets you trade in one tap.
 
-Built by [Fixr](https://fixr.nexus) | [Shipyard Launchpad](https://shipyard.fixr.nexus)
+Scry reads every bonding curve token on Base via the MCV2_Bond contract, computes opportunity signals (curve position, 24h momentum, step jumps, spread, creator reputation), and ranks them so you can find alpha before the crowd.
 
 ---
 
-## Quick Start
+## How It Works
+
+1. **Scan** — Fetches all bonding curve tokens on Base, computes signals from on-chain data
+2. **Filter** — Sort by opportunity score, curve stage, reserve depth, reserve type
+3. **Research** — Tap any token for full details: creator profile (via Farcaster/Neynar), curve chart, royalties, metadata, distribution plan
+4. **Trade** — Buy or sell directly inside the app via Mint Club SDK
+5. **Predict** — Stake $SCRY on 24h directional calls (Alpha tier)
+
+---
+
+## $SCRY Token
+
+$SCRY is a Hunt Town Co-Op bonding curve token on Base. It's not a governance token or a speculative asset — it's the access key that unlocks scanner features. Revenue comes from trading royalties, not token sales.
+
+### Tokenomics
+
+| Parameter | Value |
+|-----------|-------|
+| **Supply** | 100,000,000 (bonding curve, minted on demand) |
+| **Reserve** | HUNT |
+| **Curve** | Exponential (cheap early, expensive late) |
+| **Buy Royalty** | 5% |
+| **Sell Royalty** | 5% |
+
+Royalties flow to the Fixr treasury automatically on every trade. No staking contracts, no vesting, no VC allocation.
+
+### Distribution
+
+- **100% bonding curve** — all tokens are minted by buyers on the curve
+- No pre-mine, no team allocation, no airdrop
+- First buyers get the lowest price (exponential curve)
+- Royalties are the only revenue mechanism
+
+### Utility Tiers
+
+Hold $SCRY to unlock features. No staking required — just hold in your wallet.
+
+| Tier | Hold | Unlocks |
+|------|------|---------|
+| **Free** | 0 | Browse all tokens, basic cards, trade |
+| **Scout** | 1,000 | Signal badges, curve charts, Early + Hot filters |
+| **Pro** | 5,000 | Breakout detection, spread analysis, advanced curves |
+| **Alpha** | 25,000 | Predictions game, portfolio tracking, alerts, export |
+
+### Additional Token Sinks
+
+- **Prediction Game** — Stake 10-100 $SCRY on 24h price calls. Winners split losers' stakes minus 10% house cut
+- **Featured Listings** — Project creators pay 50 $SCRY per 24h to pin their token at the top
+
+---
+
+## Signals
+
+| Signal | How It's Computed |
+|--------|-------------------|
+| **Curve Position** | `currentSupply / maxSupply` — Early (<20%), Mid, Late (>80%), Graduating (>90%) |
+| **24h Momentum** | `get24HoursUsdRate().changePercent` — Hot (>10%), Rising (0-10%) |
+| **Reserve Depth** | `reserveBalance` — flags deep liquidity pools |
+| **Step Jump** | Price increase to next curve step — Breakout if >20% |
+| **Spread** | `(buyCost - sellReturn) / buyCost` — real round-trip cost |
+| **Creator Rating** | FID age + followers + token count + verified address (via Neynar) |
+| **Royalties** | Low Fee (<5% total) or High Fee (>15% total) |
+| **Age** | Hours since creation — New (<24h), Dormant (zero supply) |
+
+---
+
+## Stack
+
+- **Next.js 15** + React 19 + Tailwind CSS
+- **Mint Club V2 SDK** — token list, enrichment, trading
+- **Farcaster Mini App SDK** — frame context, wallet connector
+- **Neynar API** — creator profile lookup by ETH address
+- **wagmi + viem** — Base chain interaction
+- **Vercel** — deployment
+
+---
+
+## Setup
 
 ```bash
-# Clone the template
-git clone https://github.com/the-fixr/farcaster-miniapp-template.git my-app
-cd my-app
-
-# Install dependencies
 npm install
-
-# Set up environment
 cp .env.example .env.local
-
-# Start development
+# Add your NEYNAR_API_KEY to .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see your app.
+---
+
+## License
+
+MIT
 
 ---
 
-## What to Change vs What NOT to Change
-
-### ✅ SAFE TO MODIFY
-
-| File | What to Change |
-|------|----------------|
-| `app/page.tsx` | Your app's main content and UI |
-| `app/layout.tsx` | App name, description, metadata |
-| `public/manifest.json` | App name, URLs, colors, icons |
-| `tailwind.config.ts` | Colors, fonts, theme |
-| `.env.local` | Your environment variables |
-| `public/*.png` | Your app icons and images |
-
-### ⚠️ MODIFY WITH CAUTION
-
-| File | Notes |
-|------|-------|
-| `app/components/WalletProvider.tsx` | Only modify `SUPPORTED_CHAINS` if needed |
-| `next.config.ts` | Only add to existing config, don't remove headers |
-
-### ❌ DO NOT MODIFY
-
-| File | Reason |
-|------|--------|
-| `app/components/FrameSDK.tsx` | Security-critical SDK wrapper |
-| `package.json` (core deps) | Tested dependency versions |
-
----
-
-## Deployment Checklist
-
-### Before You Deploy
-
-- [ ] Update `public/manifest.json` with your URLs
-- [ ] Update `app/layout.tsx` with your app metadata
-- [ ] Add your icons to `/public` (icon.png, splash.png, og-image.png)
-- [ ] Set `NEXT_PUBLIC_APP_URL` in environment variables
-- [ ] Test in Warpcast using their developer tools
-
-### Security Checklist
-
-- [ ] `.env.local` is in `.gitignore` (it is by default)
-- [ ] No API keys have `NEXT_PUBLIC_` prefix
-- [ ] All external URLs use HTTPS
-- [ ] Reviewed all user inputs for XSS vectors
-
----
-
-## Deploy to Vercel (Recommended)
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/the-fixr/farcaster-miniapp-template)
-
-1. Click the button above
-2. Connect your GitHub account
-3. Set environment variables:
-   - `NEXT_PUBLIC_APP_URL`: Your Vercel URL (e.g., `https://my-app.vercel.app`)
-4. Deploy!
-
-### After Deploying
-
-1. Update `public/manifest.json` with your production URL
-2. Re-deploy to apply changes
-3. Register your app at [farcaster.xyz/~/developers](https://farcaster.xyz/~/developers)
-
----
-
-## Project Structure
-
-```
-├── app/
-│   ├── page.tsx              # 👈 YOUR MAIN APP CODE
-│   ├── layout.tsx            # 👈 App metadata (change this)
-│   ├── globals.css           # Global styles
-│   ├── components/
-│   │   ├── FrameSDK.tsx      # ⛔ Don't modify
-│   │   └── WalletProvider.tsx # ⚠️ Modify chains only
-│   └── lib/
-│       └── api.ts            # Your API helpers
-├── public/
-│   ├── manifest.json         # 👈 MUST UPDATE for deployment
-│   ├── icon.png              # 👈 Your app icon (512x512)
-│   ├── splash.png            # 👈 Splash screen (512x512)
-│   └── og-image.png          # 👈 Social preview (1200x630)
-├── .env.example              # Template for env vars
-├── .env.local                # ⛔ Your secrets (git-ignored)
-└── README.md                 # This file
-```
-
----
-
-## Security Best Practices
-
-### 1. Environment Variables
-
-```bash
-# ❌ WRONG - Exposes key to client
-NEXT_PUBLIC_API_KEY=secret123
-
-# ✅ CORRECT - Server-side only
-API_KEY=secret123
-```
-
-### 2. URL Validation
-
-The FrameSDK already validates URLs, but in your own code:
-
-```typescript
-// ❌ WRONG - XSS vulnerability
-window.location.href = userInput;
-
-// ✅ CORRECT - Validate first
-if (isValidHttpsUrl(userInput)) {
-  window.open(userInput, '_blank', 'noopener,noreferrer');
-}
-```
-
-### 3. User Input
-
-```typescript
-// ❌ WRONG - XSS vulnerability
-<div dangerouslySetInnerHTML={{ __html: userInput }} />
-
-// ✅ CORRECT - React auto-escapes
-<div>{userInput}</div>
-```
-
-### 4. Wallet Transactions
-
-```typescript
-// ✅ ALWAYS show the user what they're signing
-// ✅ NEVER auto-sign transactions
-// ✅ ALWAYS validate addresses before sending
-```
-
----
-
-## Adding Features
-
-### Token Analysis
-
-Create `app/components/TokenAnalyzer.tsx`:
-
-```typescript
-'use client';
-
-import { useState } from 'react';
-
-export function TokenAnalyzer() {
-  const [address, setAddress] = useState('');
-  const [result, setResult] = useState(null);
-
-  const analyze = async () => {
-    // Call your API route (keeps keys server-side)
-    const res = await fetch(`/api/analyze?address=${address}`);
-    setResult(await res.json());
-  };
-
-  return (
-    <div>
-      <input
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-        placeholder="Token address..."
-      />
-      <button onClick={analyze}>Analyze</button>
-      {result && <pre>{JSON.stringify(result, null, 2)}</pre>}
-    </div>
-  );
-}
-```
-
-### NFT Display
-
-```typescript
-import { useWallet } from './WalletProvider';
-
-export function NFTGallery() {
-  const { address } = useWallet();
-  // Fetch NFTs for connected address...
-}
-```
-
----
-
-## Manifest.json Reference
-
-```json
-{
-  "version": "1",
-  "name": "Your App Name",           // 👈 Change this
-  "homeUrl": "https://your-url",     // 👈 Your deployed URL
-  "imageUrl": "https://your-url/og-image.png",
-  "iconUrl": "https://your-url/icon.png",
-  "button": {
-    "title": "Launch App",           // 👈 Button text
-    "action": {
-      "type": "launch_frame",
-      "name": "Your App Name",       // 👈 Same as above
-      "url": "https://your-url",     // 👈 Your deployed URL
-      "splashImageUrl": "https://your-url/splash.png",
-      "splashBackgroundColor": "#0a0a0a"  // 👈 Your brand color
-    }
-  }
-}
-```
-
----
-
-## Testing Your App
-
-### Local Development
-
-```bash
-npm run dev
-# Opens at http://localhost:3000
-```
-
-### In Warpcast
-
-1. Deploy to Vercel (or any HTTPS host)
-2. Go to Warpcast > Settings > Developer Tools
-3. Paste your manifest.json URL
-4. Test the frame
-
-### Common Issues
-
-| Issue | Solution |
-|-------|----------|
-| "Frame not loading" | Check manifest.json URLs match your domain |
-| "Wallet not connecting" | Ensure you're testing in Warpcast |
-| "Images not showing" | Use absolute HTTPS URLs |
-
----
-
-## Resources
-
-- [Farcaster Mini Apps Docs](https://docs.farcaster.xyz/mini-apps)
-- [Frames v2 Specification](https://docs.farcaster.xyz/frames-v2)
-- [miniapp-wagmi-connector](https://github.com/farcaster/miniapp-wagmi-connector)
-- [Shipyard Launchpad](https://shipyard.fixr.nexus)
-
----
-
-## Support
-
-- [Fixr on Farcaster](https://farcaster.xyz/fixr)
-- [GitHub Issues](https://github.com/the-fixr/farcaster-miniapp-template/issues)
-
----
-
-Built with 💜 by Fixr
+Built by [Fixr](https://fixr.nexus)

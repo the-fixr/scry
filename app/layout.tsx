@@ -4,8 +4,8 @@ import './globals.css';
 // ============================================
 // CUSTOMIZE YOUR APP METADATA HERE
 // ============================================
-const APP_NAME = 'My Mini App';
-const APP_DESCRIPTION = 'A Farcaster mini app';
+const APP_NAME = 'Scry';
+const APP_DESCRIPTION = 'Scry the bonding curves. Find what others miss.';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://your-app.vercel.app';
 
 export const metadata: Metadata = {

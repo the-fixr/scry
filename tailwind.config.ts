@@ -8,7 +8,6 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Customize these colors for your app
         primary: {
           DEFAULT: '#8B5CF6',
           50: '#F5F3FF',
@@ -22,9 +21,15 @@ const config: Config = {
           800: '#5B21B6',
           900: '#4C1D95',
         },
-        background: '#0a0a0a',
-        surface: '#111111',
-        border: '#1f1f1f',
+        accent: {
+          DEFAULT: '#06B6D4',
+          400: '#22D3EE',
+          500: '#06B6D4',
+          600: '#0891B2',
+        },
+        background: '#0a0b14',
+        surface: '#111827',
+        border: '#1e293b',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

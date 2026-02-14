@@ -1,15 +1,17 @@
 {
-  "name": "my-farcaster-miniapp",
+  "name": "scry",
   "version": "1.0.0",
-  "description": "A Farcaster mini app built with the Fixr template",
+  "description": "Bonding curve opportunity scanner for Base — Farcaster mini app",
   "private": true,
   "keywords": [
     "farcaster",
     "mini-app",
-    "frames",
-    "web3"
+    "bonding-curve",
+    "scanner",
+    "mint-club",
+    "base"
   ],
-  "author": "",
+  "author": "Fixr",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
@@ -22,6 +24,7 @@
     "@farcaster/miniapp-wagmi-connector": "^1.1.1",
     "@heroicons/react": "^2.2.0",
     "@tanstack/react-query": "^5.62.7",
+    "mint.club-v2-sdk": "^1.5.2",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
