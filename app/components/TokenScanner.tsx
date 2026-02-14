@@ -87,6 +87,8 @@ export function TokenScanner({ tier, scryBalance }: TokenScannerProps) {
   const [filters, setFilters] = useState<Set<FilterKey>>(new Set());
   const [reserveFilter, setReserveFilter] = useState<ReserveFilter>('all');
   const [showPredictions, setShowPredictions] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filtersRef = useRef<HTMLDivElement>(null);
   const enrichedCache = useRef<Map<string, ScannedToken>>(new Map());
 
   // Phase 1: Fast load — single RPC call, instant render
@@ -355,36 +357,44 @@ export function TokenScanner({ tier, scryBalance }: TokenScannerProps) {
         className="w-full bg-surface border border-border rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-primary focus:outline-none"
       />
 
-      {/* Sort + Reserve + Predictions row */}
+      {/* Toolbar: Sort + Filters + Predictions */}
       <div className="flex items-center gap-1.5">
         <select
           value={sortBy}
           onChange={e => setSortBy(e.target.value as SortKey)}
-          className="bg-surface border border-border rounded-lg px-1.5 py-1 text-[11px] text-gray-300 focus:border-primary focus:outline-none shrink-0"
+          className="bg-surface border border-border rounded-lg px-1.5 py-1.5 text-[11px] text-gray-300 focus:border-primary focus:outline-none shrink-0"
         >
           {SORT_OPTIONS.map(opt => (
             <option key={opt.key} value={opt.key}>{opt.label}</option>
           ))}
         </select>
-        <div className="flex gap-1 overflow-x-auto">
-          {RESERVE_OPTIONS.map(opt => (
-            <button
-              key={opt.key}
-              onClick={() => setReserveFilter(opt.key)}
-              className={`px-2 py-1 text-[10px] font-medium rounded-full border whitespace-nowrap transition-all ${
-                reserveFilter === opt.key
-                  ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
-                  : 'bg-surface border-border text-gray-500 hover:border-gray-500'
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+        <button
+          onClick={() => setFiltersOpen(!filtersOpen)}
+          className={`px-2.5 py-1.5 text-[11px] font-medium rounded-lg border transition-all shrink-0 ${
+            (filters.size > 0 || reserveFilter !== 'all')
+              ? 'bg-primary/20 border-primary/50 text-primary'
+              : filtersOpen
+                ? 'bg-surface border-gray-500 text-gray-300'
+                : 'bg-surface border-border text-gray-400 hover:border-gray-500'
+          }`}
+        >
+          Filters{(filters.size + (reserveFilter !== 'all' ? 1 : 0)) > 0
+            ? ` (${filters.size + (reserveFilter !== 'all' ? 1 : 0)})`
+            : ''}
+        </button>
+        {(filters.size > 0 || reserveFilter !== 'all') && (
+          <button
+            onClick={() => { setFilters(new Set()); setReserveFilter('all'); }}
+            className="text-[10px] text-gray-500 hover:text-gray-300 shrink-0"
+          >
+            Clear
+          </button>
+        )}
+        <div className="flex-1" />
         {hasFeature(tier, 'predictions') && (
           <button
             onClick={() => setShowPredictions(!showPredictions)}
-            className={`px-2 py-1 text-[10px] font-medium rounded-full border whitespace-nowrap transition-all shrink-0 ${
+            className={`px-2.5 py-1.5 text-[11px] font-medium rounded-lg border whitespace-nowrap transition-all shrink-0 ${
               showPredictions
                 ? 'bg-primary/20 border-primary/50 text-primary'
                 : 'bg-surface border-border text-gray-500 hover:text-gray-300'
@@ -398,25 +408,68 @@ export function TokenScanner({ tier, scryBalance }: TokenScannerProps) {
         </div>
       </div>
 
-      {/* Curve + state filters */}
-      <div className="flex gap-1 overflow-x-auto pb-0.5">
-        {FILTER_OPTIONS.map(opt => {
-          const isActive = filters.has(opt.key);
-          return (
-            <button
-              key={opt.key}
-              onClick={() => toggleFilter(opt.key)}
-              className={`px-2 py-1 text-[10px] font-medium rounded-full border whitespace-nowrap transition-all ${
-                isActive
-                  ? 'bg-primary/20 border-primary/50 text-primary'
-                  : 'bg-surface border-border text-gray-400 hover:border-gray-500'
-              }`}
-            >
-              {opt.label}
-            </button>
-          );
-        })}
-      </div>
+      {/* Filter dropdown panel */}
+      {filtersOpen && (
+        <div ref={filtersRef} className="bg-surface border border-border rounded-xl p-3 space-y-3">
+          {/* Reserve */}
+          <div>
+            <div className="text-[10px] text-gray-500 font-medium mb-1.5">Reserve Token</div>
+            <div className="flex flex-wrap gap-1.5">
+              {RESERVE_OPTIONS.map(opt => (
+                <button
+                  key={opt.key}
+                  onClick={() => setReserveFilter(opt.key)}
+                  className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
+                    reserveFilter === opt.key
+                      ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
+                      : 'bg-background border-border text-gray-500 hover:border-gray-500'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Curve Stage */}
+          <div>
+            <div className="text-[10px] text-gray-500 font-medium mb-1.5">Curve Stage</div>
+            <div className="flex flex-wrap gap-1.5">
+              {FILTER_OPTIONS.filter(o => ['early', 'mid', 'late', 'graduating'].includes(o.key)).map(opt => (
+                <button
+                  key={opt.key}
+                  onClick={() => toggleFilter(opt.key)}
+                  className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
+                    filters.has(opt.key)
+                      ? 'bg-primary/20 border-primary/50 text-primary'
+                      : 'bg-background border-border text-gray-400 hover:border-gray-500'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* State */}
+          <div>
+            <div className="text-[10px] text-gray-500 font-medium mb-1.5">State</div>
+            <div className="flex flex-wrap gap-1.5">
+              {FILTER_OPTIONS.filter(o => ['deep', 'active', 'dormant'].includes(o.key)).map(opt => (
+                <button
+                  key={opt.key}
+                  onClick={() => toggleFilter(opt.key)}
+                  className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
+                    filters.has(opt.key)
+                      ? 'bg-primary/20 border-primary/50 text-primary'
+                      : 'bg-background border-border text-gray-400 hover:border-gray-500'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       {showPredictions ? (
