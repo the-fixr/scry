@@ -355,60 +355,58 @@ export function TokenScanner({ tier, scryBalance }: TokenScannerProps) {
         className="w-full bg-surface border border-border rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-primary focus:outline-none"
       />
 
-      {/* Sort + Predictions toggle */}
-      <div className="flex items-center gap-2">
+      {/* Sort + Reserve + Predictions row */}
+      <div className="flex items-center gap-1.5">
         <select
           value={sortBy}
           onChange={e => setSortBy(e.target.value as SortKey)}
-          className="bg-surface border border-border rounded-lg px-2 py-1.5 text-xs text-gray-300 focus:border-primary focus:outline-none flex-1"
+          className="bg-surface border border-border rounded-lg px-1.5 py-1 text-[11px] text-gray-300 focus:border-primary focus:outline-none shrink-0"
         >
           {SORT_OPTIONS.map(opt => (
             <option key={opt.key} value={opt.key}>{opt.label}</option>
           ))}
         </select>
+        <div className="flex gap-1 overflow-x-auto">
+          {RESERVE_OPTIONS.map(opt => (
+            <button
+              key={opt.key}
+              onClick={() => setReserveFilter(opt.key)}
+              className={`px-2 py-1 text-[10px] font-medium rounded-full border whitespace-nowrap transition-all ${
+                reserveFilter === opt.key
+                  ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
+                  : 'bg-surface border-border text-gray-500 hover:border-gray-500'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
         {hasFeature(tier, 'predictions') && (
           <button
             onClick={() => setShowPredictions(!showPredictions)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+            className={`px-2 py-1 text-[10px] font-medium rounded-full border whitespace-nowrap transition-all shrink-0 ${
               showPredictions
                 ? 'bg-primary/20 border-primary/50 text-primary'
                 : 'bg-surface border-border text-gray-500 hover:text-gray-300'
             }`}
           >
-            My Calls
+            Calls
           </button>
         )}
-        <div className="text-[10px] text-gray-600">
-          {filteredTokens.length} token{filteredTokens.length !== 1 ? 's' : ''}
+        <div className="text-[10px] text-gray-600 shrink-0">
+          {filteredTokens.length}
         </div>
       </div>
 
-      {/* Reserve filter */}
-      <div className="flex gap-1 overflow-x-auto pb-0.5">
-        {RESERVE_OPTIONS.map(opt => (
-          <button
-            key={opt.key}
-            onClick={() => setReserveFilter(opt.key)}
-            className={`px-2.5 py-1 text-[11px] font-medium rounded-full border whitespace-nowrap transition-all ${
-              reserveFilter === opt.key
-                ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
-                : 'bg-surface border-border text-gray-500 hover:border-gray-500'
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-
       {/* Curve + state filters */}
-      <div className="flex gap-1.5 overflow-x-auto pb-0.5">
+      <div className="flex gap-1 overflow-x-auto pb-0.5">
         {FILTER_OPTIONS.map(opt => {
           const isActive = filters.has(opt.key);
           return (
             <button
               key={opt.key}
               onClick={() => toggleFilter(opt.key)}
-              className={`px-2.5 py-1 text-[11px] font-medium rounded-full border whitespace-nowrap transition-all ${
+              className={`px-2 py-1 text-[10px] font-medium rounded-full border whitespace-nowrap transition-all ${
                 isActive
                   ? 'bg-primary/20 border-primary/50 text-primary'
                   : 'bg-surface border-border text-gray-400 hover:border-gray-500'
