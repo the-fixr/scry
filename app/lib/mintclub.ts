@@ -272,36 +272,99 @@ export async function estimateSell(symbolOrAddress: string, amount: bigint): Pro
   }
 }
 
-export function executeBuy(symbolOrAddress: string, params: {
+export async function executeBuy(symbolOrAddress: string, params: {
   amount: bigint;
   slippage?: number;
   recipient?: `0x${string}`;
+  walletClient?: unknown;
+  onApproving?: () => void;
+  onMinting?: () => void;
   onSuccess?: (receipt: unknown) => void;
   onError?: (error: unknown) => void;
 }) {
-  return network().token(symbolOrAddress).buy({
-    amount: params.amount,
-    slippage: params.slippage ?? 500,
-    recipient: params.recipient,
-    onSuccess: params.onSuccess,
-    onError: params.onError,
-  });
+  try {
+    // Configure SDK with Farcaster wallet if provided
+    if (params.walletClient) {
+      mintclub.withWalletClient(params.walletClient as import('viem').WalletClient);
+    }
+
+    const token = network().token(symbolOrAddress);
+    let wasApproval = false;
+
+    // First call — may be approval or mint
+    params.onApproving?.();
+    await token.buy({
+      amount: params.amount,
+      slippage: params.slippage ?? 500,
+      recipient: params.recipient,
+      onAllowanceSignatureRequest: () => params.onApproving?.(),
+      onAllowanceSuccess: () => { wasApproval = true; },
+      onSignatureRequest: () => params.onMinting?.(),
+      onSuccess: params.onSuccess,
+      onError: params.onError,
+    });
+
+    // If first call was approval, call again to mint
+    if (wasApproval) {
+      params.onMinting?.();
+      await token.buy({
+        amount: params.amount,
+        slippage: params.slippage ?? 500,
+        recipient: params.recipient,
+        onSignatureRequest: () => params.onMinting?.(),
+        onSuccess: params.onSuccess,
+        onError: params.onError,
+      });
+    }
+  } catch (e) {
+    params.onError?.(e);
+  }
 }
 
-export function executeSell(symbolOrAddress: string, params: {
+export async function executeSell(symbolOrAddress: string, params: {
   amount: bigint;
   slippage?: number;
   recipient?: `0x${string}`;
+  walletClient?: unknown;
+  onApproving?: () => void;
+  onSelling?: () => void;
   onSuccess?: (receipt: unknown) => void;
   onError?: (error: unknown) => void;
 }) {
-  return network().token(symbolOrAddress).sell({
-    amount: params.amount,
-    slippage: params.slippage ?? 500,
-    recipient: params.recipient,
-    onSuccess: params.onSuccess,
-    onError: params.onError,
-  });
+  try {
+    if (params.walletClient) {
+      mintclub.withWalletClient(params.walletClient as import('viem').WalletClient);
+    }
+
+    const token = network().token(symbolOrAddress);
+    let wasApproval = false;
+
+    params.onApproving?.();
+    await token.sell({
+      amount: params.amount,
+      slippage: params.slippage ?? 500,
+      recipient: params.recipient,
+      onAllowanceSignatureRequest: () => params.onApproving?.(),
+      onAllowanceSuccess: () => { wasApproval = true; },
+      onSignatureRequest: () => params.onSelling?.(),
+      onSuccess: params.onSuccess,
+      onError: params.onError,
+    });
+
+    if (wasApproval) {
+      params.onSelling?.();
+      await token.sell({
+        amount: params.amount,
+        slippage: params.slippage ?? 500,
+        recipient: params.recipient,
+        onSignatureRequest: () => params.onSelling?.(),
+        onSuccess: params.onSuccess,
+        onError: params.onError,
+      });
+    }
+  } catch (e) {
+    params.onError?.(e);
+  }
 }
 
 // ============================================

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useWalletClient } from 'wagmi';
 import { useWallet } from './WalletProvider';
 import { estimateBuy, estimateSell, executeBuy, executeSell } from '../lib/mintclub';
 
@@ -13,13 +14,16 @@ interface TradePanelProps {
   onTradeComplete?: () => void;
 }
 
+type TxStatus = 'idle' | 'approving' | 'minting' | 'selling' | 'success' | 'error';
+
 export function TradePanel({ tokenSymbol, tokenAddress, reserveSymbol, currentPrice, onTradeComplete }: TradePanelProps) {
   const { address, isConnected } = useWallet();
+  const { data: walletClient } = useWalletClient();
   const [mode, setMode] = useState<'buy' | 'sell'>('buy');
   const [amount, setAmount] = useState('');
   const [estimation, setEstimation] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [txStatus, setTxStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle');
+  const [txStatus, setTxStatus] = useState<TxStatus>('idle');
   const [slippage, setSlippage] = useState(500); // 5% default
 
   // Debounced estimation
@@ -48,16 +52,13 @@ export function TradePanel({ tokenSymbol, tokenAddress, reserveSymbol, currentPr
   }, [amount, mode, tokenAddress, reserveSymbol]);
 
   const handleTrade = async () => {
-    if (!address || !amount) return;
+    if (!address || !amount || !walletClient) return;
     const amountBigInt = BigInt(Math.floor(Number(amount) * 1e18));
 
     setLoading(true);
-    setTxStatus('pending');
+    setTxStatus(mode === 'buy' ? 'approving' : 'approving');
 
-    const params = {
-      amount: amountBigInt,
-      slippage,
-      recipient: address as `0x${string}`,
+    const commonCallbacks = {
       onSuccess: () => {
         setTxStatus('success');
         setLoading(false);
@@ -73,9 +74,36 @@ export function TradePanel({ tokenSymbol, tokenAddress, reserveSymbol, currentPr
     };
 
     if (mode === 'buy') {
-      executeBuy(tokenAddress, params);
+      executeBuy(tokenAddress, {
+        amount: amountBigInt,
+        slippage,
+        recipient: address as `0x${string}`,
+        walletClient,
+        onApproving: () => setTxStatus('approving'),
+        onMinting: () => setTxStatus('minting'),
+        ...commonCallbacks,
+      });
     } else {
-      executeSell(tokenAddress, params);
+      executeSell(tokenAddress, {
+        amount: amountBigInt,
+        slippage,
+        recipient: address as `0x${string}`,
+        walletClient,
+        onApproving: () => setTxStatus('approving'),
+        onSelling: () => setTxStatus('selling'),
+        ...commonCallbacks,
+      });
+    }
+  };
+
+  const statusLabel = () => {
+    switch (txStatus) {
+      case 'approving': return 'Approving...';
+      case 'minting': return 'Minting...';
+      case 'selling': return 'Selling...';
+      case 'success': return 'Done!';
+      case 'error': return 'Try Again';
+      default: return null;
     }
   };
 
@@ -141,20 +169,29 @@ export function TradePanel({ tokenSymbol, tokenAddress, reserveSymbol, currentPr
       {/* Trade button */}
       <button
         onClick={handleTrade}
-        disabled={!isConnected || !amount || loading || Number(amount) <= 0}
+        disabled={!isConnected || !walletClient || !amount || loading || Number(amount) <= 0}
         className={`w-full py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
           mode === 'buy'
             ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
             : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
         }`}
       >
-        {loading ? 'Processing...' :
+        {loading ? (statusLabel() || 'Processing...') :
          txStatus === 'success' ? 'Done!' :
          txStatus === 'error' ? 'Try Again' :
          !isConnected ? 'Connect Wallet' :
          mode === 'buy' ? 'Buy' : 'Sell'}
       </button>
 
+      {txStatus === 'approving' && (
+        <div className="text-[10px] text-amber-400 text-center">Waiting for token approval...</div>
+      )}
+      {txStatus === 'minting' && (
+        <div className="text-[10px] text-emerald-400 text-center">Executing buy...</div>
+      )}
+      {txStatus === 'selling' && (
+        <div className="text-[10px] text-red-400 text-center">Executing sell...</div>
+      )}
       {txStatus === 'success' && (
         <div className="text-[10px] text-emerald-400 text-center">Transaction confirmed</div>
       )}
