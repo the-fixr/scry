@@ -33,6 +33,36 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
     images: [`${APP_URL}/og-image.png`],
   },
+  other: {
+    'fc:miniapp': JSON.stringify({
+      version: '1',
+      imageUrl: `${APP_URL}/og-image.png`,
+      button: {
+        title: 'Scry the Curves',
+        action: {
+          type: 'launch_miniapp',
+          name: APP_NAME,
+          url: APP_URL,
+          splashImageUrl: `${APP_URL}/icon.png`,
+          splashBackgroundColor: '#0a0b14',
+        },
+      },
+    }),
+    'fc:frame': JSON.stringify({
+      version: '1',
+      imageUrl: `${APP_URL}/og-image.png`,
+      button: {
+        title: 'Scry the Curves',
+        action: {
+          type: 'launch_frame',
+          name: APP_NAME,
+          url: APP_URL,
+          splashImageUrl: `${APP_URL}/icon.png`,
+          splashBackgroundColor: '#0a0b14',
+        },
+      },
+    }),
+  },
 };
 
 export default function RootLayout({
