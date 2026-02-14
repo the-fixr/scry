@@ -36,8 +36,8 @@ const SCRY_CONFIG = {
     initialMintingPrice: 0.0001,  // 0.0001 HUNT per token at start
     finalMintingPrice: 1.0,       // 1.0 HUNT per token at full supply
   },
-  buyRoyalty: 500,  // 5% (basis points)
-  sellRoyalty: 500,  // 5%
+  buyRoyalty: 0.05,  // 5%
+  sellRoyalty: 0.05,  // 5%
 };
 
 async function main() {

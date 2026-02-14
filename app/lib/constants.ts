@@ -3,8 +3,8 @@
 
 export const BOND_ADDRESS = '0xc5a076cad94176c2996B32d8466Be1cE757FAa27' as const; // MCV2_Bond (same across chains)
 export const HUNT_ADDRESS = '0x37f0c2915CeCC7e977183B8543Fc0864d03E064C' as const; // HUNT token on Base
-export const SCRY_TOKEN = '0x0000000000000000000000000000000000000000' as const; // TODO: Set after deploying $SCRY
-export const SCRY_TREASURY = '0x0000000000000000000000000000000000000000' as const; // TODO: Treasury wallet
+export const SCRY_TOKEN = '0xd8d819c393e284630233ae1dde7a4547c1a6debf' as const; // $SCRY on Base (HUNT reserve)
+export const SCRY_TREASURY = '0xBe2Cc1861341F3b058A3307385BEBa84167b3fa4' as const; // Creator/treasury wallet
 export const BASE_CHAIN_ID = 8453;
 export const LATEST_TOKEN_COUNT = 200; // How many newest tokens to fetch
 export const CACHE_TTL_MS = 60_000; // 1 min

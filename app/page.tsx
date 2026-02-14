@@ -31,9 +31,7 @@ function AppContent() {
     const fetchBalances = async () => {
       const [huntRaw, scryRaw] = await Promise.all([
         getTokenBalance(HUNT_ADDRESS as `0x${string}`, wallet),
-        SCRY_TOKEN !== '0x0000000000000000000000000000000000000000'
-          ? getTokenBalance(SCRY_TOKEN as `0x${string}`, wallet)
-          : Promise.resolve(0n),
+        getTokenBalance(SCRY_TOKEN as `0x${string}`, wallet),
       ]);
       const huntVal = Number(huntRaw) / 1e18;
       setHuntBalance(huntVal < 0.01 && huntVal > 0 ? huntVal.toFixed(6) : huntVal.toFixed(2));
