@@ -8,6 +8,7 @@
     "version": "1",
     "name": "Scry",
     "homeUrl": "https://scry.fixr.nexus",
+    "webhookUrl": "https://api.neynar.com/f/app/e08f92b7-4107-42a3-b00b-129ddf67b1cd/event",
     "iconUrl": "https://scry.fixr.nexus/icon.png",
     "imageUrl": "https://scry.fixr.nexus/og-image.png",
     "splashImageUrl": "https://scry.fixr.nexus/icon.png",
