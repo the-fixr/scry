@@ -95,8 +95,11 @@ export function FrameSDKProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initSDK = async () => {
       try {
-        // Check if we're in a Farcaster mini app
-        const inMiniApp = await sdk.isInMiniApp();
+        // Check if we're in a Farcaster mini app (with timeout — hangs outside Warpcast)
+        const inMiniApp = await Promise.race([
+          sdk.isInMiniApp(),
+          new Promise<boolean>(resolve => setTimeout(() => resolve(false), 1500)),
+        ]);
         setIsInMiniApp(inMiniApp);
 
         if (inMiniApp) {

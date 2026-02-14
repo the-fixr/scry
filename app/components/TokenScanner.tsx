@@ -171,10 +171,12 @@ export function TokenScanner({ tier, scryBalance }: TokenScannerProps) {
       setRoyalties(royaltyInfo);
       setZapAvailable(isZapAvailable(token.detail.reserveSymbol));
 
-      // Fetch Farcaster profile (non-blocking)
-      fetchCreatorProfile(token.detail.bond.creator, creatorCount).then(profile => {
-        setCreatorProfile(profile);
-      });
+      // Fetch Farcaster profile (Alpha tier only)
+      if (hasFeature(tier, 'predictions')) {
+        fetchCreatorProfile(token.detail.bond.creator, creatorCount).then(profile => {
+          setCreatorProfile(profile);
+        });
+      }
 
       if (enriched) {
         const signals = computeSignals(enriched, priceChange, buyEst, sellEst);
@@ -506,10 +508,10 @@ export function TokenScanner({ tier, scryBalance }: TokenScannerProps) {
               </div>
             </div>
 
-            {/* Creator card */}
-            <div className="bg-slate-950 rounded-lg p-2.5">
-              <div className="text-[10px] text-gray-500 mb-1.5">Creator</div>
-              {creatorProfile ? (
+            {/* Creator info */}
+            {hasFeature(tier, 'predictions') && creatorProfile ? (
+              <div className="bg-slate-950 rounded-lg p-2.5">
+                <div className="text-[10px] text-gray-500 mb-1.5">Creator</div>
                 <div className="flex items-center gap-2.5">
                   <img
                     src={creatorProfile.pfpUrl}
@@ -542,21 +544,8 @@ export function TokenScanner({ tier, scryBalance }: TokenScannerProps) {
                     <span className="text-[9px] text-gray-600 mt-0.5">{creatorProfile.rating}/100</span>
                   </div>
                 </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-gray-600 flex-shrink-0">?</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[10px] text-gray-500 font-mono truncate">
-                      {selectedToken.detail.bond.creator.slice(0, 6)}...{selectedToken.detail.bond.creator.slice(-4)}
-                    </div>
-                    {creatorTokenCount > 1 && (
-                      <div className="text-[10px] text-gray-600">{creatorTokenCount} tokens launched</div>
-                    )}
-                    <div className="text-[9px] text-gray-600 mt-0.5">No Farcaster profile found</div>
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            ) : null}
 
             {/* Description (from creator) */}
             {tokenMeta?.creatorComment && (

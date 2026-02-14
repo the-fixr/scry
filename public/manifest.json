@@ -1,17 +1,17 @@
 {
   "version": "1",
   "name": "Scry",
-  "homeUrl": "https://scry-app.vercel.app",
-  "imageUrl": "https://scry-app.vercel.app/og-image.png",
-  "iconUrl": "https://scry-app.vercel.app/icon.png",
+  "homeUrl": "https://scry.fixr.nexus",
+  "imageUrl": "https://scry.fixr.nexus/icon.png",
+  "iconUrl": "https://scry.fixr.nexus/icon.png",
   "button": {
-    "title": "Scry",
+    "title": "Scry the Curves",
     "action": {
       "type": "launch_frame",
       "name": "Scry",
-      "url": "https://scry-app.vercel.app",
-      "splashImageUrl": "https://scry-app.vercel.app/splash.png",
-      "splashBackgroundColor": "#0a0a0a"
+      "url": "https://scry.fixr.nexus",
+      "splashImageUrl": "https://scry.fixr.nexus/icon.png",
+      "splashBackgroundColor": "#0a0b14"
     }
   }
 }

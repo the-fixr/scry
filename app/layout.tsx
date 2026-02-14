@@ -5,8 +5,8 @@ import './globals.css';
 // CUSTOMIZE YOUR APP METADATA HERE
 // ============================================
 const APP_NAME = 'Scry';
-const APP_DESCRIPTION = 'Scry the bonding curves. Find what others miss.';
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://your-app.vercel.app';
+const APP_DESCRIPTION = 'Bonding curve scanner for Base. Find early tokens, track momentum, spot breakouts — trade in one tap.';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://scry.fixr.nexus';
 
 export const metadata: Metadata = {
   title: APP_NAME,
